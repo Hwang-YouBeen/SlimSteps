@@ -1,0 +1,438 @@
+<!DOCTYPE HTML>
+<!--
+	Dopetrope by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>SlimSteps by HTML5 UP</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<style>
+		  #uploaded-photo {
+			max-width: 100%; /* 사진의 최대 너비를 부모 요소에 따라서 정해지게 */
+			max-height: 300px; /* 사진의 최대 높이는 300px. */
+			display: block;
+			margin-top: 10px;
+		  }
+	  
+		  /* 달력 스타일 */
+		  #calendar-container {
+			width: 100%; 
+			height: 100%; 
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			overflow: hidden; 
+		  }
+		  @import url('https://fonts.googleapis.com/css?family=Questrial&display=swap');
+	  
+		  .Calendar {
+			text-align: center;
+		  }
+	  
+		  .Calendar>thead>tr:first-child>td {
+			font-family: 'Questrial', sans-serif;
+			font-size: 1.1em;
+			font-weight: bold;
+		  }
+	  
+		  .Calendar>thead>tr:last-child>td {
+			font-family: 'Questrial', sans-serif;
+			font-weight: 600;
+		  }
+	  
+		  .Calendar>tbody>tr>td>p {
+			font-family: 'Montserrat', sans-serif;
+			height: 45px;
+			width: 45px;
+			border-radius: 45px;
+			transition-duration: .2s;
+			line-height: 45px;
+			margin: 2.5px;
+			display: block;
+			text-align: center;
+		  }
+	  
+		  .pastDay {
+			color: lightgray;
+		  }
+	  
+		  .today {
+			background-color: #F5D042;
+			color: #fff;
+			font-weight: 600;
+			cursor: pointer;
+		  }
+	  
+		  .futureDay {
+			background-color: #FFFFFF;
+			cursor: pointer;
+		  }
+	  
+		  .futureDay:hover {
+			background: #eee;
+		  }
+	  
+		  .futureDay.choiceDay,
+		  .today.choiceDay {
+			background: #0A174E;
+			color: #fff;
+			font-weight: 600;
+			cursor: pointer;
+		  }
+		  
+		  /* 달력 컨테이너 스타일 */
+		  .calendar-container {
+			width: 100%;
+			height: 100%;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			overflow: hidden; /* 달력이 부모 요소를 벗어나지 않게 */
+		  }
+		  .Calendar {
+			margin: 0 auto; /* 가운데 정렬 */
+		}
+
+		  #calendar-container {
+			max-width: 100%;
+			max-height: 100%;
+		  }
+		</style>
+	</head>
+
+	<body class="left-sidebar is-preload">
+		<div id="page-wrapper">
+			<!-- Header -->
+				<section id="header">
+					<!-- Logo -->
+						<h1 id="logo">
+							<a href="index.html">Slim</a>
+							<a href="index.html">Steps</a>
+						</h1>
+					<!-- Nav -->
+						<nav id="nav">
+							<ul>
+								<li><a href="index.html">Main</a></li>
+								<li class="current"><a id="green" href="left-sidebar.html">Diet Chart</a></li>
+								<li><a href="right-sidebar.html">Caloric Calculator</a></li>
+								<li><a href="no-sidebar.html">News</a></li>
+							</ul>
+						</nav>
+				</section>
+			<!-- Main -->
+				<section id="main">
+					<div class="container">
+						<h3 id="page_title">&lang; Record your daily Diet! &rang;</h3>
+						<hr id="green_hr">
+						<div class="row">
+							<div class="col-4 col-12-medium">
+								<section class="box" id="calendar">
+									<script>
+										window.onload = function () { buildCalendar(); }    // 웹 페이지가 로드되면 buildCalendar 실행
+
+										let nowMonth = new Date();  // 현재 달을 페이지를 로드한 날의 달로 초기화
+										let today = new Date();     // 페이지를 로드한 날짜를 저장
+										today.setHours(0, 0, 0, 0);    // 비교 편의를 위해 today의 시간을 초기화
+
+										// 달력 생성 : 해당 달에 맞춰 테이블을 만들고, 날짜를 채워 넣음
+										function buildCalendar() {
+
+											let firstDate = new Date(nowMonth.getFullYear(), nowMonth.getMonth(), 1);     // 이번달 1일
+											let lastDate = new Date(nowMonth.getFullYear(), nowMonth.getMonth() + 1, 0);  // 이번달 마지막날
+
+											let tbody_Calendar = document.querySelector(".Calendar > tbody");
+											document.getElementById("calYear").innerText = nowMonth.getFullYear();             // 연도 숫자 갱신
+											document.getElementById("calMonth").innerText = leftPad(nowMonth.getMonth() + 1);  // 월 숫자 갱신
+
+											while (tbody_Calendar.rows.length > 0) {                        // 이전 출력결과가 남아있는 경우 초기화
+												tbody_Calendar.deleteRow(tbody_Calendar.rows.length - 1);
+											}
+
+											let nowRow = tbody_Calendar.insertRow();        // 첫번째 행 추가
+
+											for (let j = 0; j < firstDate.getDay(); j++) {  // 이번달 1일의 요일만큼
+												let nowColumn = nowRow.insertCell();        // 열 추가
+											}
+
+											for (let nowDay = firstDate; nowDay <= lastDate; nowDay.setDate(nowDay.getDate() + 1)) {   // day는 날짜를 저장하는 변수, 이번달 마지막날까지 증가시키며 반복
+
+												let nowColumn = nowRow.insertCell();        // 새 열을 추가하고
+
+
+												let newDIV = document.createElement("p");
+												newDIV.innerHTML = leftPad(nowDay.getDate());        // 추가한 열에 날짜 입력
+												nowColumn.appendChild(newDIV);
+
+												if (nowDay.getDay() == 6) {                 // 토요일인 경우
+													nowRow = tbody_Calendar.insertRow();    // 새로운 행 추가
+												}
+
+												if (nowDay < today) {                       // 지난날인 경우
+													newDIV.className = "pastDay";
+												}
+												else if (nowDay.getFullYear() == today.getFullYear() && nowDay.getMonth() == today.getMonth() && nowDay.getDate() == today.getDate()) { // 오늘인 경우
+													newDIV.className = "today";
+													newDIV.onclick = function () { choiceDate(this); }
+												}
+												else {                                      // 미래인 경우
+													newDIV.className = "futureDay";
+													newDIV.onclick = function () { choiceDate(this); }
+												}
+											}
+										}
+
+										// 날짜 선택
+										function choiceDate(newDIV) {
+											if (document.getElementsByClassName("choiceDay")[0]) {                              // 기존에 선택한 날짜가 있으면
+												document.getElementsByClassName("choiceDay")[0].classList.remove("choiceDay");  // 해당 날짜의 "choiceDay" class 제거
+											}
+											newDIV.classList.add("choiceDay");           // 선택된 날짜에 "choiceDay" class 추가
+										}
+
+										// 이전달 버튼 클릭
+										function prevCalendar() {
+											nowMonth = new Date(nowMonth.getFullYear(), nowMonth.getMonth() - 1, nowMonth.getDate());   // 현재 달을 1 감소
+											buildCalendar();    // 달력 다시 생성
+										}
+										// 다음달 버튼 클릭
+										function nextCalendar() {
+											nowMonth = new Date(nowMonth.getFullYear(), nowMonth.getMonth() + 1, nowMonth.getDate());   // 현재 달을 1 증가
+											buildCalendar();    // 달력 다시 생성
+										}
+
+										// input값이 한자리 숫자인 경우 앞에 '0' 붙혀주는 함수
+										function leftPad(value) {
+											if (value < 10) {
+												value = "0" + value;
+												return value;
+											}
+											return value;
+										}
+									</script>
+									</head>
+
+									<body>
+										<div>
+											<table class="Calendar">
+												<thead>
+													<tr>
+														<td onClick="prevCalendar();" style="cursor:pointer;">&#60;</td>
+														<td colspan="5">
+															<span id="calYear"></span>년
+															<span id="calMonth"></span>월
+														</td>
+														<td onClick="nextCalendar();" style="cursor:pointer;">&#62;</td>
+													</tr>
+													<tr>
+														<td>일</td>
+														<td>월</td>
+														<td>화</td>
+														<td>수</td>
+														<td>목</td>
+														<td>금</td>
+														<td>토</td>
+													</tr>
+												</thead>
+
+												<tbody>
+												</tbody>
+											</table>
+										</div>
+								</section>
+
+								<script>
+									// 기록 추가 버튼 클릭 시
+									document.getElementById('add-record-button').addEventListener('click', function (e) {
+										e.preventDefault();
+										var record = document.getElementById('record-text').value;
+										var score = document.querySelector('input[name="score"]:checked').value;
+
+										if (record && score) {
+											var recordItem = document.createElement('li');
+											var recordText = document.createTextNode(record + ' (Score: ' + score + ')');
+											recordItem.appendChild(recordText);
+											document.getElementById('record-list').appendChild(recordItem);
+											document.getElementById('record-text').value = '';
+										}
+									});
+								</script>
+							</div>
+						</div>
+						<div class="col-8 col-12-medium imp-medium;">
+							<section class="box">
+								<header>
+									<h3>오늘의 식단 사진 올리기</h3>
+								</header>
+								<form id="upload-form">
+									<input type="file" id="photo-input" accept="image/*" />
+									<img id="uploaded-photo" src="#" alt="" style="display: none;" />
+								</form>
+								<footer>
+									<a href="#" id="upload-button" class="button alt">열기</a>
+								</footer>
+							</section>
+							<script>
+								// 업로드 버튼 클릭 시 파일 선택 창 열기
+								document.getElementById('upload-button').addEventListener('click', function (e) {
+									e.preventDefault();
+									document.getElementById('photo-input').click();
+								});
+
+								// 파일 선택 시 미리보기
+								document.getElementById('photo-input').addEventListener('change', function (e) {
+									var file = e.target.files[0];
+									var reader = new FileReader();
+									reader.onload = function (e) {
+										document.getElementById('uploaded-photo').src = e.target.result;
+										document.getElementById('uploaded-photo').style.display = 'block';
+									}
+									reader.readAsDataURL(file);
+								});
+							</script>
+							<div id="dietchart-bottom">
+								<section class="box" id="dietchart_left">
+									<header>
+										<h3>오늘의 식단 한 줄 코멘트</h3>
+									</header>
+									<form id="record-form">
+										<textarea id="record-text" placeholder="오늘의 식단에 대해 기록해 주세요!" rows="4"></textarea>
+									</form>
+									<footer>
+										<a href="#" id="add-record-button" class="button alt">등록</a>
+									</footer>
+									<hr>
+									<h3><오늘의 식단 한 줄 평></h3>
+									<ul id="record-list"></ul>
+								</section>
+								<!--라디오 버튼 -->
+								<section class="box" id="dietchart_right">
+									<form>
+										<h3>오늘의 식단은 몇 점?</h3>
+
+										<table>
+											<tr>
+												<td><input type="radio" name="number" value="1" onclick="updateSelectedValue()">1</td>
+												<td><input type="radio" name="number" value="2" onclick="updateSelectedValue()">2</td>
+												<td><input type="radio" name="number" value="3" onclick="updateSelectedValue()">3</td>
+												<td><input type="radio" name="number" value="4" onclick="updateSelectedValue()">4</td>
+												<td><input type="radio" name="number" value="5" onclick="updateSelectedValue()">5</td>
+
+											</tr>
+										</table>
+										<input type="button" value="등록" onclick="addRecord()">
+									</form>
+									<hr />
+									<h3><오늘의 식단 점수></h3>
+									<ul id="recordList"></ul>
+								</section>
+							</div>
+						</div>
+
+						<script>
+							// 기록 추가 버튼 클릭 시
+							document.getElementById('add-record-button').addEventListener('click', function (e) {
+								e.preventDefault();
+								var record = document.getElementById('record-text').value;
+								if (record) {
+									var recordItem = document.createElement('li');
+									var recordText = document.createTextNode(record);
+									recordItem.appendChild(recordText);
+									document.getElementById('record-list').appendChild(recordItem);
+									document.getElementById('record-text').value = '';
+								}
+							});
+						</script>
+							
+							<script>
+								function updateSelectedValue() {
+									var selectedRadio = document.querySelector('input[name="number"]:checked');
+									var selectedValue = document.getElementById('selectedValue');
+									if (selectedRadio && selectedValue) {
+										selectedValue.textContent = selectedRadio.value;
+									}
+								}
+
+								function addRecord() {
+									var selectedRadio = document.querySelector('input[name="number"]:checked');
+									var recordList = document.getElementById('recordList');
+									if (selectedRadio && recordList) {
+										var selectedValue = selectedRadio.value;
+										var newRecord = document.createElement('li');
+										newRecord.textContent = selectedValue;
+										recordList.appendChild(newRecord);
+									}
+								}
+							
+							</script>
+							<div class="cal-radio">
+								<script>
+									// 기록 추가 버튼 클릭 시
+									document.getElementById('add-record-button').addEventListener('click', function(e) {
+									  e.preventDefault();
+									  var record = document.getElementById('record-text').value;
+									  var score = document.querySelector('input[name="score"]:checked').value;
+										  
+									  if (record && score) {
+									  	var recordItem = document.createElement('li');
+									  	var recordText = document.createTextNode(record + ' (Score: ' + score + ')');
+										recordItem.appendChild(recordText);
+										document.getElementById('record-list').appendChild(recordItem);
+										document.getElementById('record-text').value = '';
+									  }
+									});
+								</script>
+							</div>
+							
+
+								<!--하단 주석-->
+								<br />
+								<div class="col-4 col-12-medium">
+									<section>
+										<header>
+											<h2>Made by. Team 유RL</h2>
+										</header>
+										<ul class="social">
+											<li><a class="icon brands fa-twitter" href="https://twitter.com/Twitter"><span class="label">Twitter</span></a></li>
+											<li><a class="icon brands fa-instagram" href="https://www.instagram.com/"><span class="label">Dribbble</span></a></li>
+											<li><a class="icon brands fa-github" href="!!!우리 깃허브 링크 넣기!!!"><span class="label">LinkedIn</span></a></li>
+										</ul>
+										<ul class="contact">
+											<li>
+												<h3>Affiliation</h3>
+												<p>
+													Chung-ang univ.<br />
+												</p>
+											</li>
+											<li>
+												<h3>Mail</h3>
+												<p><a href="https://www.cau.ac.kr/index.do">teamYRL@chungang.ac.kr</a></p>
+											</li>
+											<li>
+												<h3>Phone</h3>
+												<p>(010) 2022 - 2022</p>
+											</li>
+										</ul>
+								</section>
+						
+								</div>
+							</div>
+						</div>
+					</div>
+				</section>
+
+		</div>
+
+		<!-- Scripts -->
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/jquery.dropotron.min.js"></script>
+			<script src="assets/js/browser.min.js"></script>
+			<script src="assets/js/breakpoints.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<script src="assets/js/main.js"></script>
+
+	</body>
+</html>
